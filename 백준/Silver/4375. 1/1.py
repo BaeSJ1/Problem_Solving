@@ -14,8 +14,7 @@ while True:
     num = 0
     i = 1
     while True:
-        num = num * 10 + 1  # num은 1부터 11,111,1111 계속 커지는 역할
-        num %= n
+        num = (num % n * 10 + 1) % n  # num은 1부터 11,111,1111 계속 커지는 역할
         if num == 0:
             print(i)
             break
