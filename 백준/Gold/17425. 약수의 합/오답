@@ -1,0 +1,20 @@
+# python
+
+'''
+    배수를 이용해서 약수의 합 구하기
+    (N//i)*i의 sum
+'''
+
+import sys
+
+t = int(input())
+n = []
+sum_val = []
+
+for i in range(1, t + 1):
+    n.append(sys.stdin.readline())
+    for j in range(1, int(n[i - 1]) + 1):
+        num = (int(n[i - 1]) // j) * j
+        sum_val.append(num)
+    print(sum(sum_val))
+    sum_val.clear()
