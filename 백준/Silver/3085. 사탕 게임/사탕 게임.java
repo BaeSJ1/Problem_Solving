@@ -1,29 +1,22 @@
-/*
-    임의의 두 칸을 고르려면 한 칸을 고른다. 전체 N^2 중에 하나
-    한 칸: (i, j)
-    # 시작점부터 오른쪽, 아래만 검색하여도 전체를 탐색하게 된다.
-    # 교환 후, 계산해보고 최댓값이면 result 에 추가 다시 원래 상태로 바꾼다.
- */
-
 import java.util.*;
 
 public class Main {
     static int check(char[][] arr) {
-        //행일 때와 열일 때로 나눠서 계산
+        //행과 열로 구분하여 연속되는 최대 개수 검사
+        //1행의 최대 개수 검사
         int max_count = 1;
         for (int i = 0; i < arr.length; i++) {
-            int cnt = 1;
+            int row_count = 1;
+            int column_count = 1;
             for (int j = 1; j < arr.length; j++) {
-                if (arr[i][j] == arr[i][j - 1]) cnt++;
-                else cnt = 1;
-                if (cnt > max_count) max_count = cnt;
-            }
+                /// 0행일 때, j=0,1,2 에 전의 수랑 같으면 개수 추가
+                if (arr[i][j] == arr[i][j - 1]) row_count += 1;
+                else row_count = 1;
+                if (row_count > max_count) max_count = row_count;
 
-            cnt = 1;
-            for(int j = 1; j < arr.length; j++){
-                if(arr[j][i] == arr[j-1][i]) cnt++;
-                else cnt = 1;
-                if(cnt > max_count) max_count = cnt;
+                if (arr[j][i] == arr[j-1][i]) column_count += 1;
+                else column_count = 1;
+                if (column_count > max_count) max_count = column_count;
             }
         }
         return max_count;
@@ -40,17 +33,19 @@ public class Main {
         }
 
         int max_count = 1;
-        for (int i = 0; i < n; i++) {  // 행
-            for (int j = 0; j < n; j++) {  // 열
-                // 인접한 오른쪽(j+1) 자리 선택
-                if (j + 1 < n) {  // 범위에 벗어나지 않도록
+
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+
+                // 인접한 오른쪽 사탕과 교환하며, 연속되는 최대 개수 검사한다.
+                if (j + 1 < n) {
+                    // 교환
                     char t = arr[i][j];
                     arr[i][j] = arr[i][j + 1];
                     arr[i][j + 1] = t;
 
-                    // arr[i][j]와 arr[i][j+1] 두개를 교환했을 때 1행 또는 열 중 가장 큰 값. 이 중에 또 가장 max 값 골라야함.
                     int count = check(arr);
-                    if(count > max_count) max_count = count;
+                    if (count > max_count) max_count = count;
 
                     // 원상복귀
                     t = arr[i][j];
@@ -58,14 +53,15 @@ public class Main {
                     arr[i][j+1] = t;
                 }
 
-                // 인접한 아래쪽(i+1) 자리 선택
+                // 인접한 아래쪽 사탕에 대하여 똑같은 방식 진행
                 if (i + 1 < n){
+                    // 교환
                     char t = arr[i][j];
                     arr[i][j] = arr[i+1][j];
                     arr[i+1][j] = t;
 
                     int count = check(arr);
-                    if(count > max_count) max_count = count;
+                    if (count > max_count) max_count = count;
 
                     // 원상복귀
                     t = arr[i][j];
