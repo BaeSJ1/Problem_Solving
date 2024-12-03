@@ -1,16 +1,16 @@
-import java.util.Scanner;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
 public class Main {
-    public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-        int a = sc.nextInt();
-        int b = sc.nextInt();
+        String[] s = br.readLine().split(" ");
 
-        a = Integer.parseInt(new StringBuilder().append(a).reverse().toString());
-        b = Integer.parseInt(new StringBuilder().append(b).reverse().toString());
+        int a = Integer.parseInt(new StringBuilder().append(s[0]).reverse().toString());
+        int b = Integer.parseInt(new StringBuilder().append(s[1]).reverse().toString());
 
         System.out.println(a > b ? a : b);
-
     }
 }
