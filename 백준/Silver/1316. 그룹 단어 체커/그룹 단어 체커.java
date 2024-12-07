@@ -1,36 +1,35 @@
-import java.util.Scanner;
+import java.io.*;
 
 public class Main {
-    public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        int testCase = sc.nextInt();  // 테스트케이스 개수
-        int groupWord = 0;  // 그룹 단어가 몇개 있는지 총 개수 세기
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        int n = Integer.parseInt(br.readLine());
+        int count = 0;
 
-        for (int tc = 0; tc < testCase; tc++) {
-            String s = sc.next();
-            boolean check = true;  // 하나의 문자열 검사할 때, 문자열의 각 문자 겹치는거 없으면 true 고, 겹치는게 있다면 false 로 바로 멈춘다.
-            for (int i = 0; i < s.length(); i++) {
-                // 문자 하나 일때와, 문자열이 동일한 하나의 문자로 이루어져 있을 경우 예외 처리 필요
-                if(!check) break; // 그룹 단어 아니라고 판명나면 바로 멈춤
-                if (i + 1 < s.length()) {
-                    if (s.charAt(i) == s.charAt(i + 1)) {
-                        continue;
-                    } else {
-                        for (int j = i + 1; j < s.length(); j++) {
-                            if (s.charAt(i) == s.charAt(j)) {
-                                check = false;
-                                break;
-                            } else {
-                                check = true;
-                            }
-                        }
-                    }
-                }
-            }
-            if (check) {  // 그룹 단어 맞으면
-                groupWord++;
+        for (int i = 0; i < n; i++) {
+            if (checkStr(br.readLine())) {  // 문자열이 그룹단어면,
+                count++;  // 개수를 센다.
             }
         }
-        System.out.println(groupWord);
+        br.close();
+        System.out.println(count);
+    }
+
+    static boolean checkStr(String s) {
+        boolean[] checkAlpha = new boolean[26];
+        int prev = -1;  // 이전 문자의 인덱스 값을 저장
+
+        for (int i = 0; i < s.length(); i++) {
+            int now = s.charAt(i);  // 현재 문자의 아스키코드
+            if (prev != now) {  // 이전 문자와 i번째 문자가 같지 않다면
+                if (!checkAlpha[now - 'a']) {  // 앞에서 나온 문자인지 체크한다. 체크되지 않은 곳이면,
+                    checkAlpha[now - 'a'] = true;  // 체크하고
+                    prev = now;  // 이전 인덱스를 현재 인덱스로 변경한다.
+                } else {
+                    return false;
+                }
+            } else continue; // 이전 문자와 현재 문자가 같다면 계속 반복
+        }
+        return true;
     }
 }
