@@ -1,6 +1,7 @@
 import java.util.Scanner;
 
 public class Main {
+    // 테트로미노의 총 개수는 19개
     static int[][][] block = {
             {{0, 1}, {0, 2}, {0, 3}},
             {{1, 0}, {2, 0}, {3, 0}},
@@ -25,36 +26,33 @@ public class Main {
 
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-
         int n = sc.nextInt();
         int m = sc.nextInt();
         int result = 0;
-        int[][] a = new int[n][m];
+        int[][] arr = new int[n][m];
 
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < m; j++) {
-                a[i][j] = sc.nextInt();
+                arr[i][j] = sc.nextInt();
             }
         }
 
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < m; j++) {
-                // 테트로미노의 개수는 총 19개
-                for (int k = 0; k < 19; k++) {
-                    int sum = a[i][j];
-                    boolean is_tetromino = true;
-                    for (int l = 0; l < 3; l++) {
-                        int x = i + block[k][l][0];
-                        int y = j + block[k][l][1];
-                        // 범위에 맞으면 값을 더해야한다.
+                for (int block_cnt = 0; block_cnt < 19; block_cnt++) {
+                    int sum = arr[i][j];
+                    boolean check = true;
+                    for (int a = 0; a < 3; a++) {
+                        int x = i + block[block_cnt][a][0];
+                        int y = j + block[block_cnt][a][1];
                         if (0 <= x && x < n && 0 <= y && y < m) {
-                            sum += a[x][y];
+                            sum += arr[x][y];
                         } else {
-                            is_tetromino = false;
+                            check = false;
                             break;
                         }
                     }
-                    if(is_tetromino && result < sum){
+                    if (check && result < sum) {
                         result = sum;
                     }
                 }
