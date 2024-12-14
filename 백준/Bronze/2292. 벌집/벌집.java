@@ -6,17 +6,14 @@ public class Main {
         int n = sc.nextInt();
         int cnt = 0;
         int number = 1;
-        while (true){
-            if(n == 1){
-                System.out.println(1);
-                break;
+        if (n == 1) {
+            System.out.println(1);
+        } else {
+            while (number < n) {
+                cnt++;
+                number += 6 * cnt;
             }
-            cnt ++;
-            number = number + 6 * cnt;
-            if(number - 6 * cnt + 1 <= n && n <= number){
-                System.out.println(cnt + 1);
-                break;
-            }
+            System.out.println(cnt + 1);
         }
     }
 }
