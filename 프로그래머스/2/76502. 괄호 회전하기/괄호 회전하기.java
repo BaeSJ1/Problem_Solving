@@ -1,38 +1,35 @@
-import java.util.*;
+import java.util.HashMap;
+import java.util.ArrayDeque;
 
 class Solution {
     public int solution(String s) {
+        // 닫힌 괄호가 있을 때, stack을 pop하면서 맞는 열린 괄호가 있는지 체크해야한다.
         HashMap<Character, Character> map = new HashMap<>();
-        map.put('(', ')');
-        map.put('{', '}');
-        map.put('[', ']');
+        map.put(']','[');
+        map.put('}','{');
+        map.put(')','(');
         
         int n = s.length();
-        int answer = 0;
-
-        // n번 회전
-        A: for (int i = 0; i < n; i++) {
-            ArrayDeque<Character> stack = new ArrayDeque<>();
-
-            // 회전된 문자열 처리
-            for (int j = 0; j < n; j++) {
-                char c = s.charAt((i + j) % n); // 회전을 구현하기 위해 인덱스 조정
-                
-                if (map.containsKey(c)) { // 열리는 괄호 처리
+        s += s;
+        int result = 0;
+        
+        ArrayDeque<Character> stack = new ArrayDeque<>();
+        
+        A: for(int i = 0; i < n; i++){  // 괄호의 개수만큼 loop 돌린다. 0~5 체크, 1~6 체크 ...
+            for(int j = i; j < i + n; j++){
+                char c = s.charAt(j);
+                if(!map.containsKey(c)){ // 열린 괄호면,
                     stack.push(c);
-                } else { // 닫는 괄호 처리
-                    if (stack.isEmpty() || map.get(stack.pop()) != c) {
-                        continue A; // 잘못된 괄호 조합 -> 다음 회전으로 넘어감
+                } else{  // 닫힌 괄호면,
+                    if(stack.isEmpty() || !stack.pop().equals(map.get(c))){
+                        continue A;
                     }
                 }
             }
-            
-            // 스택이 비어 있다면 올바른 괄호
-            if (stack.isEmpty()) {
-                answer++;
+            if(stack.isEmpty()){
+                result++;
             }
         }
-
-        return answer;
+        return result;
     }
 }
