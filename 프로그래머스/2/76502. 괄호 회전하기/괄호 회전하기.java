@@ -1,35 +1,36 @@
-import java.util.HashMap;
-import java.util.ArrayDeque;
-
+import java.util.*;
 class Solution {
     public int solution(String s) {
-        // 닫힌 괄호가 있을 때, stack을 pop하면서 맞는 열린 괄호가 있는지 체크해야한다.
-        HashMap<Character, Character> map = new HashMap<>();
-        map.put(']','[');
-        map.put('}','{');
-        map.put(')','(');
+        HashMap<Character, Character> str = new HashMap<>();
+        
+        str.put(']', '[');
+        str.put(')', '(');
+        str.put('}', '{');
         
         int n = s.length();
         s += s;
-        int result = 0;
+        int count = 0;
         
-        ArrayDeque<Character> stack = new ArrayDeque<>();
-        
-        A: for(int i = 0; i < n; i++){  // 괄호의 개수만큼 loop 돌린다. 0~5 체크, 1~6 체크 ...
-            for(int j = i; j < i + n; j++){
-                char c = s.charAt(j);
-                if(!map.containsKey(c)){ // 열린 괄호면,
-                    stack.push(c);
-                } else{  // 닫힌 괄호면,
-                    if(stack.isEmpty() || !stack.pop().equals(map.get(c))){
-                        continue A;
+        for(int i = 0; i < n; i++){
+            ArrayDeque<Character> stack = new ArrayDeque<>(); // 다음꺼 검사할 때 스택 초기화 필요
+            boolean bool = true;
+            for(int j = i; j < n + i; j++){
+                if(str.containsKey(s.charAt(j))){ // 닫힌 괄호일때
+                    if(!stack.isEmpty() && str.get(s.charAt(j)).equals(stack.peek())){
+                        stack.pop();
+                        
+                    } else{ // 잘못된 괄호일때
+                        bool = false;
+                        break;
                     }
+                } else{ // 열린 괄호일때
+                  stack.push(s.charAt(j));  
                 }
             }
-            if(stack.isEmpty()){
-                result++;
+            if(bool && stack.isEmpty()){
+                count++;
             }
         }
-        return result;
+        return count;
     }
 }
