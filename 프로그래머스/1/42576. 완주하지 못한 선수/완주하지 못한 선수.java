@@ -2,18 +2,16 @@ import java.util.HashMap;
 
 class Solution {
     public String solution(String[] participant, String[] completion) {
-        HashMap<String, Integer> hashMap = new HashMap<>();
-        
+        HashMap<String, Integer> map = new HashMap<>();
         for(String c: completion){
-            hashMap.put(c, hashMap.getOrDefault(c, 0) + 1);
+            map.put(c, map.getOrDefault(c, 0) + 1);
         }
         
         for(String p: participant){
-            // hashMap(완주자)에 참여자 키(이름)이 없다면
-            if(hashMap.getOrDefault(p, 0) == 0){
-                return p;
-            } else{
-                hashMap.put(p, hashMap.get(p) - 1);
+            if(map.getOrDefault(p, 0) == 0){ // 완주자 목록 값이 0인거랑, 완주자 목록 key값에 없는 참가자면
+                return p;             
+            }else{
+                map.put(p, map.get(p) - 1);
             }
         }
         return null;
