@@ -1,39 +1,38 @@
 import java.util.*;
 
-public class Solution {
+class Solution {
     public int[] solution(String[] genres, int[] plays) {
-        Map<String, HashMap<Integer, Integer>> genreMap = new HashMap<>();
-        Map<String, Integer> playMap = new HashMap<>();
-
-        // ❶ 장르별 총 재생 횟수와 곡 정보 저장
-        for (int i = 0; i < genres.length; i++) {
-            String genre = genres[i];
-            int play = plays[i];
-
-            // 장르별 총 재생 횟수 누적
-            playMap.put(genre, playMap.getOrDefault(genre, 0) + play);
-
-            // 장르별 (고유번호, 재생 횟수) 저장
-            genreMap.computeIfAbsent(genre, k -> new HashMap<>()).put(i, play);
+        HashMap<String, HashMap<Integer, Integer>> genreMap = new HashMap<>();
+        HashMap<String, Integer> totalMap = new HashMap<>();
+        
+        // 해시 값 채우기
+        for(int i = 0; i < genres.length; i++){
+            if(!genreMap.containsKey(genres[i])){  // HashMap안에 HashMap이 있는경우, 이 과정을 통해 NullException()을 방지해야한다.
+                genreMap.put(genres[i], new HashMap<>());
+            }
+            genreMap.get(genres[i]).put(i, plays[i]);
+            totalMap.put(genres[i], totalMap.getOrDefault(genres[i], 0) + plays[i]);
         }
-
-        List<Integer> answer = new ArrayList<>();
-
-        // ❷ 장르별 총 재생 횟수 기준으로 정렬
-        List<String> sortedGenres = new ArrayList<>(playMap.keySet());
-        sortedGenres.sort((a, b) -> playMap.get(b) - playMap.get(a));
-
-        // ❸ 각 장르에서 재생 횟수 기준으로 최대 2곡 선택
-        for (String genre : sortedGenres) {
-            List<Map.Entry<Integer, Integer>> songs = new ArrayList<>(genreMap.get(genre).entrySet());
-            songs.sort((a, b) -> b.getValue() - a.getValue()); // 재생 횟수 기준 내림차순 정렬
-
-            // 최대 2곡 추가
-            for (int i = 0; i < Math.min(2, songs.size()); i++) {
-                answer.add(songs.get(i).getKey());  // 곡 고유번호 추가
+        ArrayList<Integer> result = new ArrayList<>();
+        
+        ArrayList<String> sortedPlays = new ArrayList<>(totalMap.keySet());
+        
+        // 총 재생 수를 기준으로 정렬(HashMap은 순서가 보장되지 않으므로 List로 정렬 필요)
+        // 총 재생 수가 가장 높은 장르부터 가장 늦은 장르로 내림차순 정렬이 되어있다.
+        sortedPlays.sort((a, b) -> totalMap.get(b) - totalMap.get(a));
+        
+        // 총 재생 수가 가장 큰 장르부터 같은 장르별 내림차순으로 2개까지 저장
+        for(String sortedPlay: sortedPlays){
+            // 장르별 인덱스와 개수 필요(genreMap의 value값 가져옴(map의 객체가져옴 -> entrySet() 필요))
+            ArrayList<Map.Entry<Integer, Integer>> playList = new ArrayList<>(genreMap.get(sortedPlay).entrySet());
+            
+            playList.sort((a, b) -> b.getValue() - a.getValue());
+            
+            // 최대 2곡 저장
+            for(int i = 0; i < Math.min(2, playList.size()); i++){
+                result.add(playList.get(i).getKey());  // getKey()까지하면 인덱스 값이 저장되는걸 인지해야한다.
             }
         }
-
-        return answer.stream().mapToInt(i -> i).toArray();
+        return result.stream().mapToInt(Integer::intValue).toArray();
     }
 }
