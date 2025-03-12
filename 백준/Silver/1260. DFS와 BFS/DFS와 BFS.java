@@ -1,0 +1,83 @@
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Scanner;
+
+public class Main {
+    private static ArrayList<Integer>[] adjList;
+    private static boolean[] visited;
+    private static ArrayList<Integer> dfsResult = new ArrayList<>();
+    private static ArrayList<Integer> bfsResult = new ArrayList<>();
+
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        int m = sc.nextInt();
+        int v = sc.nextInt();
+
+        // 인접리스트 초기화
+        adjList = new ArrayList[n + 1];
+
+        for (int i = 0; i < n + 1; i++) {
+            adjList[i] = new ArrayList<>();
+        }
+
+        // 인접리스트 생성
+        for (int i = 0; i < m; i++) {
+            int a = sc.nextInt();
+            int b = sc.nextInt();
+
+            adjList[a].add(b);
+            adjList[b].add(a);
+        }
+
+        // 정점 번호가 작은 순서대로 방문해야 하므로 정렬
+        for(int i = 1; i <= n; i++){
+            // ArrayList 를 정렬하는 것이므로 Collections 필요
+            Collections.sort(adjList[i]);
+        }
+
+        visited = new boolean[n + 1];
+        dfs(v);
+
+        visited = new boolean[n + 1];
+        bfs(v);
+
+        dfsResult.forEach(num -> System.out.print(num + " "));
+        System.out.println();
+
+        bfsResult.forEach(num -> System.out.print(num + " "));
+        System.out.println();
+    }
+
+    private static void dfs(int start){
+        visited[start] = true;
+        dfsResult.add(start);
+        for(int next: adjList[start]){
+            if(!visited[next])
+                dfs(next);
+        }
+
+    }
+
+    private static void bfs(int start){
+        ArrayDeque<Integer> queue = new ArrayDeque<>();
+
+        queue.add(start);
+        visited[start] = true;
+
+        // 큐 안에 값이 남아있을때 계속 실행
+        while(!queue.isEmpty()){
+            int now = queue.poll();
+            bfsResult.add(now);
+
+            for(int next: adjList[now]){
+                if(!visited[next]){
+                    visited[next] = true;
+                    queue.add(next);
+                }
+            }
+        }
+    }
+}
