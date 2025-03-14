@@ -2,80 +2,79 @@ import java.util.*;
 class Solution {
     private static final int[] dx = {-1, 1, 0, 0};
     private static final int[] dy = {0, 0, 1, -1};
-        
+    
+    private static int n;
+    private static int m;
+    private static char[][] map;
+    
     private static class Point{
-        int nx, ny;
-        
-        public Point(int nx, int ny){
-                this.nx = nx;
-                this.ny = ny;
+        int x;
+        int y;
+        public Point(int x, int y){
+            this.x = x;
+            this.y = y;
         }
     }
-    
-    private static char[][] map;
-    private static int n, m;
-    
     
     public int solution(String[] maps) {
         n = maps.length;
         m = maps[0].length();
-        
         map = new char[n][m];
+        
         for(int i = 0; i < n; i++){
             map[i] = maps[i].toCharArray();
         }
         
-        Point start = null, end = null, lever = null;
+        Point start = null, lever = null, end = null;
         
-        // 시작 지점, 출구, 그리고 레버의 위치를 찾음
         for(int i = 0; i < n; i++){
             for(int j = 0; j < m; j++){
                 if(map[i][j] == 'S') start = new Point(i, j);
-                else if(map[i][j] == 'E') end = new Point(i, j);
                 else if(map[i][j] == 'L') lever = new Point(i, j);
+                else if(map[i][j] == 'E') end = new Point(i, j);
             }
         }
         
-        // 시작 -> 레버 최단거리, 레버 -> 출구까지의 최단 거리 각각 구함
         int startLever = bfs(start, lever);
         int leverEnd = bfs(lever, end);
         
-        // 도착 불가능한 경우는 -1, 도착 가능한 경우는 최단 거리를 반환
-        if(startLever == -1 || leverEnd == -1)
-            return -1;
-        else
-            return startLever + leverEnd;
+        if(startLever == -1 || leverEnd == -1) return -1;
+        else return startLever + leverEnd;
     }
     
     private static int bfs(Point start, Point end){
+        // 최단 거리 값 저장
         int[][] dist = new int[n][m];
-        
         ArrayDeque<Point> queue = new ArrayDeque<>();
-        dist[start.nx][start.ny] = 1;
+        dist[start.x][start.y] = 1;
         queue.add(start);
         
         while(!queue.isEmpty()){
             Point now = queue.poll();
             
             for(int i = 0; i < 4; i++){
-                int nextX = now.nx + dx[i];
-                int nextY = now.ny + dy[i];
+                int nextX = now.x + dx[i];
+                int nextY = now.y + dy[i];
                 
+                // 범위를 벗어나면 패스
                 if(nextX < 0 || nextX >= n || nextY < 0 || nextY >= m) continue;
                 
-                if(dist[nextX][nextY] > 0) continue;
-                
+                // 벽인 경우 패스
                 if(map[nextX][nextY] == 'X') continue;
                 
-                dist[nextX][nextY] = dist[now.nx][now.ny] + 1;
+                // 이미 방문한 경우 탐색하지 않음
+                if(dist[nextX][nextY] > 0) continue;
+                
+                // 거리 1증가
+                dist[nextX][nextY] = dist[now.x][now.y] + 1;
                 
                 queue.add(new Point(nextX, nextY));
                 
-                if(nextX == end.nx && nextY == end.ny)
-                    return dist[end.nx][end.ny] - 1;
+                if(nextX == end.x && nextY == end.y)
+                    return dist[end.x][end.y] - 1;
+                
             }
         }
-        
         return -1;
     }
 }
