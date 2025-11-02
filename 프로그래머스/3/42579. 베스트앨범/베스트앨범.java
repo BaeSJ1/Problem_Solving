@@ -1,38 +1,49 @@
+//13:39 - 14:17
+
 import java.util.*;
 
 class Solution {
     public int[] solution(String[] genres, int[] plays) {
-        HashMap<String, HashMap<Integer, Integer>> genreMap = new HashMap<>();
-        HashMap<String, Integer> totalMap = new HashMap<>();
-        
-        // 해시 값 채우기
+        Map<String, Integer> countMap = new HashMap<>();
+        Map<String, List<int[]>> musicMap = new HashMap<>();
+            
+        /// 1. 가장 많이 재생된 장르를 계산한다.(내림차순)
+        /// Map<장르, 재생수>
         for(int i = 0; i < genres.length; i++){
-            if(!genreMap.containsKey(genres[i])){  // HashMap안에 HashMap이 있는경우, 이 과정을 통해 NullException()을 방지해야한다.
-                genreMap.put(genres[i], new HashMap<>());
-            }
-            genreMap.get(genres[i]).put(i, plays[i]);
-            totalMap.put(genres[i], totalMap.getOrDefault(genres[i], 0) + plays[i]);
-        }
-        ArrayList<Integer> result = new ArrayList<>();
-        
-        ArrayList<String> sortedPlays = new ArrayList<>(totalMap.keySet());
-        
-        // 총 재생 수를 기준으로 정렬(HashMap은 순서가 보장되지 않으므로 List로 정렬 필요)
-        // 총 재생 수가 가장 높은 장르부터 가장 늦은 장르로 내림차순 정렬이 되어있다.
-        sortedPlays.sort((a, b) -> totalMap.get(b) - totalMap.get(a));
-        
-        // 총 재생 수가 가장 큰 장르부터 같은 장르별 내림차순으로 2개까지 저장
-        for(String sortedPlay: sortedPlays){
-            // 장르별 인덱스와 개수 필요(genreMap의 value값 가져옴(map의 객체가져옴 -> entrySet() 필요))
-            ArrayList<Map.Entry<Integer, Integer>> playList = new ArrayList<>(genreMap.get(sortedPlay).entrySet());
+            String genre = genres[i];
+            int play = plays[i];
             
-            playList.sort((a, b) -> b.getValue() - a.getValue());
+            countMap.put(genre, countMap.getOrDefault(genre, 0) + play);
+            musicMap.computeIfAbsent(genre, k -> new ArrayList<>()).add(new int[]{i, play});
+        }
+        
+        // map 정렬은 list로 바꾸고 해야한다.
+        List<String> genreOrder = new ArrayList<>(countMap.keySet());
+        genreOrder.sort((a, b) -> countMap.get(b) - countMap.get(a));
+        
+        
+        /// 2. 장르 내에 가장 많이 재생된 노래를 계산한다.(내림차순)
+        /// - 재생횟수가 같은 노래는 인덱스가 더 작은걸 넣어야한다.
+        /// - Map<장르, {인덱스, 재생횟수}>
+        List<Integer> result = new ArrayList<>();
+        
+        for(String genre: genreOrder){
+            List<int[]> songs = musicMap.get(genre);
             
-            // 최대 2곡 저장
-            for(int i = 0; i < Math.min(2, playList.size()); i++){
-                result.add(playList.get(i).getKey());  // getKey()까지하면 인덱스 값이 저장되는걸 인지해야한다.
+            songs.sort((a, b) -> {
+                if(a[1] == b[1]) return a[0] - b[0]; // 인덱스 기준 오름차순
+                       return b[1] - a[1];
+            });
+            
+            /// 3. 위에서 계산한걸 장르별로 2개씩! 담는다.
+            result.add(songs.get(0)[0]);
+            // 한 장르에 노래 1개 초과이면 1개 더 담아야함.
+            if(songs.size() > 1){
+                result.add(songs.get(1)[0]);
             }
         }
-        return result.stream().mapToInt(Integer::intValue).toArray();
+        
+        // list -> int[] 로 변환
+        return result.stream().mapToInt(i -> i).toArray();
     }
 }
