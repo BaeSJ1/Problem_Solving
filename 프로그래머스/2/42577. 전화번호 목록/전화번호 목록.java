@@ -1,20 +1,21 @@
+// 13:19 - 13:24
 import java.util.*;
 
 class Solution {
     public boolean solution(String[] phone_book) {
-        
         Set<String> set = new HashSet<>();
         
-        for(int i = 0; i < phone_book.length; i++){
-            set.add(phone_book[i]);
+        for(String p: phone_book){
+            set.add(p);
         }
         
-        for(String s: set){
-            for(int i = 0; i < s.length(); i++){
-                if(set.contains(s.substring(0, i))) return false;
+        for(String str: set){
+            for(int i = 0; i < str.length(); i++){
+                if(set.contains(str.substring(0, i))){
+                    return false;
+                }
             }
         }
-        
         return true;
     }
 }
