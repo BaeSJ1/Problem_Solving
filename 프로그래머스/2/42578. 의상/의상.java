@@ -1,20 +1,19 @@
+// 13:28 - 13:38
 import java.util.*;
 
 class Solution {
     public int solution(String[][] clothes) {
-        // 의상 종류, 종류별 수
         Map<String, Integer> map = new HashMap<>();
-
-        for (String[] c : clothes) {
-            String category = c[1];
-            map.put(category, map.getOrDefault(category, 0) + 1);
+        
+        for(String[] c: clothes){
+            map.put(c[1], map.getOrDefault(c[1], 0) + 1);
         }
-
-        int answer = 1;
-        for (int count : map.values()) {
-            answer *= (count + 1);
+        
+        int result = 1;
+        for(String count: map.keySet()){
+            result *= (map.get(count) + 1);
         }
-
-        return answer - 1;
+        
+        return result - 1;
     }
 }
