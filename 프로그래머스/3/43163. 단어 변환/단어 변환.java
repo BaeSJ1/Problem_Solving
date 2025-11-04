@@ -1,9 +1,12 @@
+// 16:32 - 
+// 최소 변환 -> bfs
+// 같은 단어 또 방문하지 않는다(중복 체크), 한 단어만 달라야한다
+
+// 결과를 반환 할 때 depth(bfs 경로길이)를 알아야한다.
+
 import java.util.*;
 
 class Solution {
-    static int result = 0;
-    
-    // 다음 인덱스(depth)를 줘야해서 클래스 선언 형식이 나음
     static class Node{
         final String word;
         final int depth;
@@ -14,46 +17,43 @@ class Solution {
     }
     
     public int solution(String begin, String target, String[] words) {
-        // words안에 target이 없으면 return 0
-        if(Arrays.stream(words).noneMatch(target::equals)) return 0;
-        bfs(begin, target, words);
-        return result;
+        return bfs(begin, target, words);
     }
     
-    static void bfs(String begin, String target, String[] words){
+    static int bfs(String begin, String target, String[] words){
+        Set<String> set = new HashSet<>();
         Deque<Node> queue = new ArrayDeque<>();
-        Set<String> visited = new HashSet<>();
         
+        set.add(begin);
         queue.add(new Node(begin, 0));
-        visited.add(begin);
         
         while(!queue.isEmpty()){
-            Node now = queue.pop();
+            Node now = queue.poll();
             
-            // target을 찾으면 멈춘다.
             if(now.word.equals(target)){
-                result = now.depth;
-                return;
+                return now.depth;
             }
             
-            for(String word: words){
-                // 방문하지 않은 단어이고, 한 단어만 달라야한다.
-                if(!visited.contains(word) && canTransform(word, now.word)){
-                    queue.add(new Node(word, now.depth + 1));
-                    visited.add(word);
+            // 비교할 words 탐색
+            for(String next: words){
+                if(!set.contains(next) && canTransform(next, now.word)){
+                    set.add(next);
+                    queue.add(new Node(next, now.depth + 1));
                 }
             }
         }
+        return 0;
     }
     
-    static boolean canTransform(String word, String now){
+    // 한단어만 달라야함.
+    static boolean canTransform(String next, String now){
         int count = 0;
-        for(int i = 0; i < word.length(); i++){
-            // 한 단어만 달라야지 true임
-            if(word.charAt(i) != now.charAt(i)){
+        for(int i = 0; i < next.length(); i++){
+            if(next.charAt(i) != now.charAt(i)){
                 count++;
             }
         }
-        return count == 1 ? true : false;
+        
+        return count == 1;
     }
 }
