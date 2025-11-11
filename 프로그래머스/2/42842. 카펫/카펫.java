@@ -1,40 +1,17 @@
 import java.util.*;
 
+// 노란색 격자의 수가 1이상이니까 세로 길이가 최소 3은 되어야함
 class Solution {
-    static int total;
     public int[] solution(int brown, int yellow) {
-        total = brown + yellow;
-        int height = 3;
-        for(int i = 1; i <= total / 2; i++){
-            // 12면, 1*12,2*6,3*4 
-            if(check(i, brown, yellow)){
-                height = i;
-                break;
-            }
-        }
-        
         int[] result = new int[2];
-        result[0] = height;
-        result[1] = total / height;
-        
-        return result;
-    }
-    
-    private boolean check(int h, int brown, int yellow){
-        int w = total/h;
-        int b = 0;
-        int y = 0;
-        int[][] arr = new int[w][h];
-        for(int i = 0; i < arr.length; i++){
-            for(int j = 0; j < arr[i].length; j++){
-                if(i == 0 || j == 0 || i == arr.length - 1 || j == arr.length - 1){
-                    b++;
-                }else y++;
+        int total = brown + yellow;
+        for(int h = 3; h <= total; h++){
+            int w = total/h;
+            int y = (h - 2) * (w - 2);
+            if(y == yellow){
+                result = new int[]{h, w};
             }
         }
-        
-        if(b == brown && y == yellow){
-            return true;
-        } else return false;
+        return result;
     }
 }
