@@ -1,15 +1,10 @@
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Scanner;
+import java.util.*;
 
-public class Main{
-    private static ArrayList<Integer>[] adjList;
-    private static boolean[] visited;
-    private static ArrayList dfsResult = new ArrayList<>();
-    private static ArrayList bfsResult = new ArrayList<>();
+public class Main {
+    static List<Integer>[] adjList;
+    static boolean[] visited;
 
-    public static void main(String[] args){
+    public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
 
         int n = sc.nextInt();
@@ -17,54 +12,47 @@ public class Main{
         int v = sc.nextInt();
 
         adjList = new ArrayList[n + 1];
+        visited = new boolean[n + 1];
 
         // 인접리스트 초기화
-        for(int i = 0; i < n + 1; i++){
+        for (int i = 0; i <= n; i++) {
             adjList[i] = new ArrayList<>();
         }
 
-        for(int i = 0; i < m; i++){
+        for (int i = 0; i < m; i++) {
             int a = sc.nextInt();
             int b = sc.nextInt();
             adjList[a].add(b);
-            //양방향
             adjList[b].add(a);
         }
 
-        for(int i = 1; i <= n; i++){
+        // 정렬
+        for (int i = 0; i <= n; i++){
             Collections.sort(adjList[i]);
         }
 
-        visited = new boolean[n + 1];
         dfs(v);
-
-        visited = new boolean[n + 1];
+        System.out.println();
+        Arrays.fill(visited, false);
         bfs(v);
 
-        dfsResult.forEach(num -> System.out.print(num + " "));
-        System.out.println();
-
-        bfsResult.forEach(num -> System.out.print(num + " "));
-        System.out.println();
     }
 
-    private static void dfs(int start){
-        visited[start] = true;
-        dfsResult.add(start);
-        for(int next: adjList[start]){
-            if(!visited[next]){
-                dfs(next);
-            }
+    static void dfs(int node) {
+        visited[node] = true;
+        System.out.print(node + " ");
+        for(int next: adjList[node]){
+            if(!visited[next]) dfs(next);
         }
     }
 
-    private static void bfs(int start){
-        ArrayDeque<Integer> queue = new ArrayDeque<>();
-        queue.add(start);
-        visited[start] = true;
+    static void bfs(int node){
+        Deque<Integer> queue = new ArrayDeque<>();
+        queue.add(node);
+        visited[node] = true;
         while(!queue.isEmpty()){
             int now = queue.poll();
-            bfsResult.add(now);
+            System.out.print(now + " ");
             for(int next: adjList[now]){
                 if(!visited[next]){
                     visited[next] = true;
@@ -73,5 +61,4 @@ public class Main{
             }
         }
     }
-
 }
